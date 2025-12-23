@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TRIP</title>
+  <style>
+    /* Scenic hill-station background */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(
+          rgba(7, 26, 50, 0.7),
+          rgba(7, 26, 50, 0.9)
+        ),
+        url("https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=1600")
+          center/cover fixed no-repeat;
+      color: #f5f7fa;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h2, h3 {
+      margin-top: 0;
+    }
+
+    section {
+      background: rgba(15, 32, 60, 0.92);
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .small-text {
+      font-size: 0.9rem;
+      color: #d0d7e2;
+    }
+
+    .places {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .place-card {
+      border-radius: 8px;
+      padding: 10px;
+      width: 260px;
+      background: rgba(25, 46, 80, 0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .place-card.visited {
+      border-color: #4caf50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+      background: rgba(19, 61, 41, 0.9);
+    }
+
+    .place-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .place-meta {
+      font-size: 0.8rem;
+      color: #d0d7e2;
+      margin-bottom: 4px;
+    }
+
+    .place-meta a {
+      color: #90caf9;
+      text-decoration: none;
+      font-size: 0.78rem;
+    }
+
+    .place-meta a:hover {
+      text-decoration: underline;
+    }
+
+    #expenses form, #sms-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    #expenses label, #sms-form label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+    }
+
+    input, select, textarea {
+      border-radius: 4px;
+      border: 1px solid #455a7a;
+      padding: 4px 6px;
+      background: #0f1c30;
+      color: #f5f7fa;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: rgba(15, 32, 60, 0.9);
+    }
+
+    th, td {
+      border: 1px solid #455a7a;
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #1a2940;
+    }
+
+    button {
+      cursor: pointer;
+      border-radius: 4px;
+      border: none;
+      padding: 6px 10px;
+      background: #1976d2;
+      color: white;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #1565c0;
+    }
+
+    .delete-btn {
+      background: #e53935;
+    }
+
+    .delete-btn:hover {
+      background: #c62828;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      background: #263a57;
+      color: #e3f2fd;
+      margin-right: 4px;
+    }
+
+    @media (max-width: 700px) {
+      .places {
+        flex-direction: column;
+      }
+      .place-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Yercaud Trip</h1>
+
+    <!-- VILLA SECTION -->
+    <section id="villa">
+      <h2>Stay – Jayam Home Stay</h2>
+      <div class="places">
+        <div class="place-card">
+          <div class="place-name">Jayam Home Stay</div>
+          <div class="place-meta">
+            <span class="badge">stay</span>
+            <span class="badge">Check-in 26th morning · Check-out 28th morning</span><br/>
+            Approx. Location:
+            <a href="https://www.google.com/maps/search/?api=1&query=Jayam+home+stay+Mundagampadi+Yercaud"
+               target="_blank">Open in Google Maps</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="summary">
+      <h2>Trip Summary</h2>
+      <p>Total Places: <span id="total-places">0</span></p>
+      <p>Visited Places: <span id="visited-places">0</span></p>
+      <p>Total Spent: ₹<span id="total-spent">0</span></p>
+    </section>
+
+    <!-- ITINERARY -->
+    <section id="itinerary">
+      <h2>Itinerary & Places</h2>
+      <p class="small-text">
+        Day 1: Peeku Park, Anna Park, Yercaud Boat House, Poppy Hills, Pagoda Point.  
+      </p>
+
+      <!-- date selector for visit status -->
+      <label class="small-text" style="display:block;margin-bottom:10px;">
+        Selected Date for Visit Status:
+        <input type="date" id="visit-date" />
+      </label>
+
+      <!-- Day 1 -->
+      <div class="day-block">
+        <h3>Day 1 – 26 Dec</h3>
+        <div class="places" id="day-26"></div>
+      </div>
+
+      <!-- Day 2 -->
+      <div class="day-block">
+        <h3>Day 2 – 27 Dec</h3>
+        <p class="small-text">
+            Day 2: Rose Garden, Lady's Seat, Kiliyur Falls, Shevaroyan Temple Cave, Servarayan Temple Ground. 
+        </p>
+        <div class="places" id="day-27"></div>
+      </div>
+
+      <!-- Day 3 -->
+      <div class="day-block">
+        <h3>Day 3 – 28 Dec</h3>
+        <p class="small-text">
+            Day 3: Sky Park, Karadivur View Point, Sri Chakra Maha Meru Temple, Nallur Waterfalls, Manjakuttai View Point. 
+        </p>
+        <div class="places" id="day-28"></div>
+      </div>
+    </section>
+
+    <!-- EXPENSES -->
+    <section id="expenses">
+      <h2>Expense Tracker</h2>
+     
+      <form id="expense-form">
+        <label>
+          Date & Time:
+          <input type="datetime-local" id="exp-datetime" required />
+        </label>
+
+        <label>
+          Category:
+          <select id="exp-category" required>
+            <option value="travel">Travel</option>
+            <option value="stay">Stay</option>
+            <option value="food">Food</option>
+            <option value="activities">Activities</option>
+            <option value="shopping">Shopping</option>
+            <option value="misc">Misc</option>
+          </select>
+        </label>
+
+        <label>
+          Description:
+          <input type="text" id="exp-desc" placeholder="e.g. Kelambakkam–Yercaud cab / Sky Park ticket" />
+        </label>
+
+        <label>
+          Amount (₹):
+          <input type="number" id="exp-amount" min="0" step="1" required />
+        </label>
+
+        <label>
+          Paid By (person):
+          <input type="text" id="exp-paid-by" placeholder="e.g. Arjun" />
+        </label>
+
+        <label>
+          Paid To (shop/person):
+          <input type="text" id="exp-paid-to" placeholder="e.g. Peeku Park counter" />
+        </label>
+
+        <button type="submit">Add Expense</button>
+      </form>
+
+      <h3>All Expenses</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount (₹)</th>
+            <th>Paid By</th>
+            <th>Paid To</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="expense-table-body"></tbody>
+      </table>
+    </section>
+
+    <!-- SMS / UPDATE TEXT -->
+    <section id="sms">
+      <h2>Share Expense Update (Send SMS)</h2>
+      <form id="sms-form">
+        <label>
+          Mobile Number (with country code, e.g. +91XXXXXXXXXX):
+          <input type="tel" id="sms-mobile" placeholder="+917305191026" />
+        </label>
+        <button type="button" id="generate-sms-btn">Generate & Send SMS</button>
+      </form>
+
+      <label>
+        Message Preview:
+        <textarea id="sms-text" rows="5" readonly></textarea>
+      </label>
+    </section>
+  </div>
+
+  <script>
+    // --------- PLACES DATA: YOUR EXACT PLAN ---------
+    const places = [
+      // DAY 1
+      { id: 1, name: "Peeku Park", category: "park", day: 26, time: "Morning", estimatedCost: 300, visited: false, visitedDate: null, maps: "https://www.google.com/maps/place/Peeku+Park+Yercaud" },
+      { id: 2, name: "Anna Park", category: "park", day: 26, time: "Late Morning", estimatedCost: 20, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Anna+Park+Yercaud" },
+      { id: 3, name: "Yercaud Boat House", category: "lake", day: 26, time: "Afternoon", estimatedCost: 200, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Yercaud+boat+house" },
+      { id: 4, name: "Poppy Hills", category: "adventure", day: 26, time: "Evening (Adventure)", estimatedCost: 800, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Poppy+Hills+Adventure+Park+Yercaud" },
+      { id: 5, name: "Pagoda Point", category: "viewpoint", day: 26, time: "Sunset / Night View", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Pagoda+Point+Yercaud" },
+
+      // DAY 2
+      { id: 6, name: "Rose Garden", category: "park", day: 27, time: "Morning", estimatedCost: 30, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Rose+Garden+Yercaud" },
+      { id: 7, name: "Lady's Seat", category: "viewpoint", day: 27, time: "Late Morning", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Lady's+Seat+Yercaud" },
+      { id: 8, name: "Kiliyur Falls", category: "waterfall", day: 27, time: "Afternoon (Trek)", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Kiliyur+Falls+Yercaud" },
+      { id: 9, name: "Shevaroyan Temple Cave", category: "temple", day: 27, time: "Evening", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Shevaroy+Temple+Yercaud" },
+      { id: 10, name: "Servarayan Temple Ground", category: "temple", day: 27, time: "Evening (Around Temple)", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Servarayan+Temple+Yercaud" },
+
+      // DAY 3
+      { id: 11, name: "Sky Park (Firs Estate, Pagoda Point Road)", category: "adventure", day: 28, time: "Morning / Adventure Slot", estimatedCost: 800, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Sky+Park+Firs+Estate+Pagoda+Point+Road+Yercaud" },
+      { id: 12, name: "Karadivur (Karadiyur) View Point", category: "viewpoint", day: 28, time: "Late Morning", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Karadiyur+View+Point+Yercaud" },
+      { id: 13, name: "Sri Chakra Maha Meru Temple", category: "temple", day: 28, time: "Midday", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Sri+Chakra+Maha+Meru+Temple+Yercaud" },
+      { id: 14, name: "Nallur Waterfalls", category: "waterfall", day: 28, time: "Afternoon", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Nallur+Waterfalls+Yercaud" },
+      { id: 15, name: "Manjakuttai View Point", category: "viewpoint", day: 28, time: "Sunrise / Evening (Flexible)", estimatedCost: 0, visited: false, visitedDate: null, maps: "https://www.google.com/maps/search/?api=1&query=Manjakuttai+View+Point+Yercaud" }
+    ];
+
+    let expenses = [];
+
+    // ---------- LOCAL STORAGE ----------
+    function saveState() {
+      localStorage.setItem("yercaud_places_final_v2", JSON.stringify(places));
+      localStorage.setItem("yercaud_expenses_final_v2", JSON.stringify(expenses));
+    }
+
+    function loadState() {
+      const savedPlaces = JSON.parse(localStorage.getItem("yercaud_places_final_v2") || "null");
+      const savedExpenses = JSON.parse(localStorage.getItem("yercaud_expenses_final_v2") || "null");
+      if (savedPlaces && Array.isArray(savedPlaces)) {
+        savedPlaces.forEach(sp => {
+          const idx = places.findIndex(p => p.id === sp.id);
+          if (idx !== -1) places[idx] = sp;
+        });
+      }
+      if (savedExpenses && Array.isArray(savedExpenses)) {
+        expenses = savedExpenses;
+      }
+    }
+
+    // ---------- RENDER PLACES ----------
+    function renderPlaces() {
+      const day26 = document.getElementById("day-26");
+      const day27 = document.getElementById("day-27");
+      const day28 = document.getElementById("day-28");
+
+      day26.innerHTML = "";
+      day27.innerHTML = "";
+      day28.innerHTML = "";
+
+      let visitedCount = 0;
+
+      places.forEach(place => {
+        if (place.visited) visitedCount++;
+
+        const card = document.createElement("div");
+        card.className = "place-card" + (place.visited ? " visited" : "");
+
+        const visitedInfo = place.visitedDate
+          ? `<div class="place-meta">Visited on: ${place.visitedDate}</div>`
+          : "";
+
+        card.innerHTML = `
+          <div class="place-name">${place.name}</div>
+          <div class="place-meta">
+            <span class="badge">${place.category}</span>
+            <span class="badge">${place.time}</span><br/>
+            Est. Cost: ₹${place.estimatedCost}
+          </div>
+          <div class="place-meta">
+            <a href="${place.maps}" target="_blank">Open in Google Maps</a>
+          </div>
+          ${visitedInfo}
+          <label>
+            <input type="checkbox" class="visited-checkbox" ${place.visited ? "checked" : ""} />
+            Mark visited (uses selected date)
+          </label>
+        `;
+
+        const checkbox = card.querySelector(".visited-checkbox");
+        checkbox.addEventListener("change", () => {
+          const dateInput = document.getElementById("visit-date");
+          const selectedDate = dateInput.value || "";
+          place.visited = checkbox.checked;
+          place.visitedDate = checkbox.checked ? selectedDate : null;
+          saveState();
+          renderPlaces();
+        });
+
+        if (place.day === 26) day26.appendChild(card);
+        else if (place.day === 27) day27.appendChild(card);
+        else if (place.day === 28) day28.appendChild(card);
+      });
+
+      document.getElementById("total-places").textContent = places.length;
+      document.getElementById("visited-places").textContent = visitedCount;
+    }
+
+    // ---------- RENDER EXPENSES ----------
+    function renderExpenses() {
+      const tbody = document.getElementById("expense-table-body");
+      tbody.innerHTML = "";
+
+      let total = 0;
+
+      expenses.forEach((exp, index) => {
+        total += exp.amount;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${exp.datetime}</td>
+          <td>${exp.category}</td>
+          <td>${exp.description}</td>
+          <td>₹${exp.amount}</td>
+          <td>${exp.paidBy}</td>
+          <td>${exp.paidTo}</td>
+          <td><button class="delete-btn" data-index="${index}">X</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("total-spent").textContent = total;
+
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const index = parseInt(btn.getAttribute("data-index"), 10);
+          expenses.splice(index, 1);
+          saveState();
+          renderExpenses();
+        });
+      });
+    }
+
+    // ---------- SMS TEXT: ONLY EXPENSE HISTORY ----------
+    function generateSmsTextForExpenses(mobile) {
+      let total = expenses.reduce((sum, e) => sum + e.amount, 0);
+
+      let text = "";
+      text += "Yercaud Trip – Expense Summary\n";
+      if (mobile) {
+        text += "For: " + mobile + "\n";
+      }
+
+      text += "\nTotal Spent So Far: ₹" + total + "\n";
+
+      text += "\nExpense History:\n";
+      if (expenses.length === 0) {
+        text += "- No expenses recorded yet.";
+      } else {
+        expenses.forEach(e => {
+          text += `- ${e.datetime} | ₹${e.amount} | ${e.category} | ${e.description || ""} | Paid by ${e.paidBy || "N/A"} to ${e.paidTo || "N/A"}\n`;
+        });
+      }
+
+      text += "\nShared from Yercaud Trip Expense Tracker.";
+      return text;
+    }
+
+    // ---------- INIT ----------
+    document.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      renderPlaces();
+      renderExpenses();
+
+      const form = document.getElementById("expense-form");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const datetime = document.getElementById("exp-datetime").value;
+        const category = document.getElementById("exp-category").value;
+        const description = document.getElementById("exp-desc").value;
+        const amountVal = document.getElementById("exp-amount").value;
+        const paidBy = document.getElementById("exp-paid-by").value;
+        const paidTo = document.getElementById("exp-paid-to").value;
+
+        const amount = Number(amountVal);
+        if (!datetime || !category || !amount) return;
+
+        expenses.push({ datetime, category, description, amount, paidBy, paidTo });
+        saveState();
+        form.reset();
+        renderExpenses();
+      });
+
+      const generateBtn = document.getElementById("generate-sms-btn");
+      generateBtn.addEventListener("click", async () => {
+        const mobile = document.getElementById("sms-mobile").value;
+        const text = generateSmsTextForExpenses(mobile);
+        document.getElementById("sms-text").value = text;
+
+        if (!mobile) {
+          alert("Enter mobile number in +91 format to send SMS.");
+          return;
+        }
+
+        try {
+          const res = await fetch("http://localhost:5000/send-sms", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ to: mobile, body: text })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            alert("SMS sent! SID: " + data.sid);
+          } else {
+            alert("Failed to send SMS: " + (data.message || "Unknown error"));
+          }
+        } catch (e) {
+          alert("Error calling SMS API: " + e.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
